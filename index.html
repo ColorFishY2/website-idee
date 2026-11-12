@@ -1,0 +1,454 @@
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f4ed">
+    <meta name="description" content="TrackCard ist die Idee einer digitalen Schülerkarte und einer Busübersicht für den Schulalltag.">
+    <title>TrackCard – Dein Schulalltag, einfacher unterwegs</title>
+    <link rel="icon" type="image/jpeg" href="image.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="#start" aria-label="TrackCard Startseite">
+            <img class="brand-mark" src="image.jpg" alt="" aria-hidden="true">
+            <span>TrackCard<span class="brand-period">.</span></span>
+        </a>
+        <nav class="main-nav" aria-label="Hauptnavigation">
+            <a href="#idee">Die Idee</a>
+            <a href="#ablauf">So funktioniert's</a>
+            <a href="#datenschutz">Datenschutz</a>
+        </nav>
+        <a class="header-cta" href="#idee">Projekt entdecken <span aria-hidden="true">↗</span></a>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Zum dunklen Modus wechseln" aria-pressed="false">
+            <span class="theme-toggle-icon" aria-hidden="true">☾</span>
+            <span class="theme-toggle-label">Dunkel</span>
+        </button>
+    </header>
+
+    <main>
+        <section class="hero" id="start" aria-labelledby="hero-title">
+            <img class="hero-image" src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=2200&q=85" alt="Ein Bus im Stadtverkehr" fetchpriority="high">
+            <div class="hero-shade" aria-hidden="true"></div>
+            <div class="hero-copy">
+                <p class="eyebrow"><span class="eyebrow-dot"></span> SCHULPROJEKT · MOBILITÄT & ALLTAG</p>
+                <h1 id="hero-title">TrackCard<span class="hero-period">.</span></h1>
+                <p class="hero-lede">Dein Schülerausweis. Immer dabei.<br>Dein Bus. Im Blick.</p>
+                <p class="hero-description">Eine Idee für weniger Suchen und einen entspannteren Schulweg: Schülerkarte digital gedacht, Busse übersichtlich auf einer Karte.</p>
+                <a class="button button-lime" href="#idee">Die Idee ansehen <span aria-hidden="true">↘</span></a>
+            </div>
+            <div class="id-card" aria-label="Beispiel einer digitalen Schülerkarte">
+                <div class="id-card-top"><span>TRACKCARD · SCHÜLERAUSWEIS</span><span class="card-spark" aria-hidden="true">✳</span></div>
+                <div class="portrait-placeholder" aria-hidden="true"><span>TC</span></div>
+                <div class="id-card-name">Alex Beispiel</div>
+                <div class="id-card-school">Muster-Gesamtschule<br>Gültig bis 31.07.2027</div>
+                <div class="id-card-bottom"><span class="demo-chip">DEMO-KARTE</span><span class="card-code" aria-hidden="true">▥ ▥ ▥ ▥</span></div>
+            </div>
+            <div class="hero-bottom"><span>GUTE IDEEN FÜR DEINEN WEG</span><span class="hero-bottom-line"></span><span>01 — 02</span></div>
+        </section>
+
+        <section class="idea-section section-wrap" id="idee" aria-labelledby="idea-title">
+            <div class="section-heading">
+                <p class="eyebrow eyebrow-dark"><span class="eyebrow-dot"></span> ZWEI IDEEN, EIN SCHULALLTAG</p>
+                <h2 id="idea-title">Weniger suchen.<br><span>Mehr ankommen.</span></h2>
+                <p class="section-intro">TrackCard verbindet zwei Dinge, die unterwegs wirklich helfen könnten: deinen Schülerausweis und den Blick auf den Bus.</p>
+            </div>
+
+            <div class="feature-grid">
+                <article class="feature feature-card">
+                    <div class="feature-copy">
+                        <span class="feature-number">01 / DIGITALE SCHÜLERKARTE</span>
+                        <h3>Dein Ausweis<br>in der Hosentasche.</h3>
+                        <p>Die Karte auf dem Handy zeigen, statt sie im Rucksack zu suchen. Zum Beispiel als Nachweis für mögliche Schülerangebote und Rabatte.</p>
+                        <span class="feature-note">Ob ein Anbieter sie akzeptiert, müsste vorher vereinbart werden.</span>
+                    </div>
+                    <div class="card-tool">
+                        <div class="tool-heading"><span>DEINE KARTE</span><span class="tool-label">NUR AUF DIESEM GERÄT</span></div>
+                        <div class="card-preview" id="card-preview">
+                            <p class="preview-placeholder" id="preview-placeholder"><span aria-hidden="true">＋</span> Noch keine Karte ausgewählt</p>
+                            <img id="student-card-preview" alt="Vorschau deiner ausgewählten Schülerkarte" hidden>
+                        </div>
+                        <div class="upload-controls">
+                            <label class="upload-button">Karte auswählen
+                                <input id="student-card-file" type="file" accept="image/*" aria-label="Bilddatei deiner Schülerkarte auswählen">
+                            </label>
+                            <button class="remove-upload" id="remove-card" type="button" hidden>Entfernen</button>
+                        </div>
+                        <p class="upload-status" id="upload-status" aria-live="polite">Wähle ein Foto deiner Karte aus. Die Datei wird nicht hochgeladen.</p>
+                    </div>
+                </article>
+
+                <article class="feature feature-bus">
+                    <div class="feature-copy">
+                        <span class="feature-number">02 / BUS IM BLICK</span>
+                        <h3>Wissen, wo<br>der Bus ist.</h3>
+                        <p>Eine Kartenansicht könnte zeigen, wo sich ein ausgestatteter Schulbus befindet und wann er ungefähr ankommt.</p>
+                        <span class="feature-note">Die Karte ist eine Konzeptansicht, keine Live-Ortung.</span>
+                    </div>
+                    <div class="map-window">
+                        <div class="tool-heading">
+                            <span>BUSKARTE · ITZEHOE</span>
+                            <div class="map-heading-actions">
+                                <span class="tool-label">DEMO-STANDORT</span>
+                                <button class="map-expand" id="map-expand" type="button" aria-label="Karte vergrößern">⛶ <span>Karte öffnen</span></button>
+                                <button class="map-close" id="map-close" type="button" aria-label="Vergrößerte Karte schließen">✕</button>
+                            </div>
+                        </div>
+                        <div class="map-experience">
+                            <aside class="bus-list" id="bus-list" aria-label="Busse und Linien">
+                                <div class="bus-list-heading">
+                                    <h4>Busse in der Nähe</h4>
+                                    <span id="bus-count">3 Linien</span>
+                                </div>
+                                <div class="bus-list-items" id="bus-list-items"></div>
+                                <p class="bus-list-note">Demo-Routen · keine Echtzeitdaten</p>
+                            </aside>
+                            <div id="bus-map" class="live-map" role="application" aria-label="Verschiebbare Karte von Itzehoe mit mehreren Buslinien"></div>
+                        </div>
+                        <p class="map-caption"><span class="status-dot"></span> Mehrere Demo-Buslinien in Itzehoe · animierte Fahrten</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="steps-section" id="ablauf" aria-labelledby="steps-title">
+            <div class="section-wrap steps-inner">
+                <div class="steps-heading">
+                    <p class="eyebrow eyebrow-dark"><span class="eyebrow-dot"></span> VON DER IDEE ZUM ALLTAG</p>
+                    <h2 id="steps-title">Einfach gedacht.<br><span>Gemeinsam möglich.</span></h2>
+                </div>
+                <div class="steps-list">
+                    <article class="step"><span class="step-index">01</span><div><h3>Schule stellt die Karte aus</h3><p>Die Schule bestätigt, wer einen gültigen Schülerausweis hat.</p></div><span class="step-arrow" aria-hidden="true">↗</span></article>
+                    <article class="step"><span class="step-index">02</span><div><h3>Du zeigst sie digital vor</h3><p>Ein teilnehmender Anbieter prüft den Nachweis, wenn er TrackCard unterstützt.</p></div><span class="step-arrow" aria-hidden="true">↗</span></article>
+                    <article class="step"><span class="step-index">03</span><div><h3>Busse senden ihren Standort</h3><p>Mit Zustimmung und passender Technik erscheint ein Bus auf der Karte.</p></div><span class="step-arrow" aria-hidden="true">↗</span></article>
+                </div>
+            </div>
+        </section>
+
+        <section class="privacy-section" id="datenschutz" aria-labelledby="privacy-title">
+            <div class="privacy-inner section-wrap">
+                <div class="privacy-symbol" aria-hidden="true">◎</div>
+                <div>
+                    <p class="eyebrow"><span class="eyebrow-dot"></span> VERTRAUEN GEHÖRT DAZU</p>
+                    <h2 id="privacy-title">Deine Daten sind<br><span>kein Fahrkartenpreis.</span></h2>
+                    <p>Eine echte TrackCard müsste persönliche Daten schützen. Für die Umsetzung wären klare Regeln mit Schulen und Verkehrsbetrieben nötig. Diese Website ist ein Schulprojekt und speichert keine Schülerkarten oder Standortdaten.</p>
+                </div>
+                <a class="privacy-link" href="#start" aria-label="Zurück zum Anfang">↑</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <a class="brand footer-brand" href="#start"><img class="brand-mark" src="image.jpg" alt="" aria-hidden="true"><span>TrackCard<span class="brand-period">.</span></span></a>
+        <p>Eine Idee für den Schulalltag. <span>Schulprojekt · 2026</span></p>
+        <a href="#datenschutz">Projekt & Datenschutz</a>
+    </footer>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeMeta = document.querySelector('meta[name="theme-color"]');
+
+        function getSavedTheme() {
+            try {
+                return localStorage.getItem('teccard-theme');
+            } catch (error) {
+                console.warn('Theme preference could not be read.', error);
+                return null;
+            }
+        }
+
+        function setTheme(theme) {
+            const isDark = theme === 'dark';
+            document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+            themeToggle.setAttribute('aria-pressed', String(isDark));
+            themeToggle.setAttribute('aria-label', `Zum ${isDark ? 'hellen' : 'dunklen'} Modus wechseln`);
+            themeToggle.querySelector('.theme-toggle-icon').textContent = isDark ? '☀' : '☾';
+            themeToggle.querySelector('.theme-toggle-label').textContent = isDark ? 'Hell' : 'Dunkel';
+            themeMeta.content = isDark ? '#171d19' : '#f5f4ed';
+            try {
+                localStorage.setItem('teccard-theme', theme);
+            } catch (error) {
+                console.warn('Theme preference could not be saved.', error);
+            }
+        }
+
+        setTheme(getSavedTheme() === 'dark' ? 'dark' : 'light');
+        themeToggle.addEventListener('click', () => {
+            setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+
+        const cardInput = document.getElementById('student-card-file');
+        const cardPreview = document.getElementById('student-card-preview');
+        const previewPlaceholder = document.getElementById('preview-placeholder');
+        const uploadStatus = document.getElementById('upload-status');
+        const removeCardButton = document.getElementById('remove-card');
+        let cardPreviewUrl;
+
+        cardInput.addEventListener('change', () => {
+            const file = cardInput.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                uploadStatus.textContent = 'Bitte wähle eine Bilddatei aus.';
+                cardInput.value = '';
+                return;
+            }
+
+            if (cardPreviewUrl) URL.revokeObjectURL(cardPreviewUrl);
+            cardPreviewUrl = URL.createObjectURL(file);
+            cardPreview.src = cardPreviewUrl;
+            cardPreview.hidden = false;
+            previewPlaceholder.hidden = true;
+            removeCardButton.hidden = false;
+            uploadStatus.textContent = `${file.name} wird nur hier im Browser angezeigt.`;
+        });
+
+        removeCardButton.addEventListener('click', () => {
+            cardInput.value = '';
+            cardPreview.removeAttribute('src');
+            cardPreview.hidden = true;
+            previewPlaceholder.hidden = false;
+            removeCardButton.hidden = true;
+            uploadStatus.textContent = 'Wähle ein Foto deiner Karte aus. Die Datei wird nicht hochgeladen.';
+            if (cardPreviewUrl) URL.revokeObjectURL(cardPreviewUrl);
+            cardPreviewUrl = undefined;
+        });
+
+        const busMap = L.map('bus-map', { zoomControl: false }).setView([53.9228, 9.5155], 12.5);
+        L.control.zoom({ position: 'bottomright' }).addTo(busMap);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende'
+        }).addTo(busMap);
+
+        const routeDefs = [
+            {
+                name: 'Linie 1',
+                color: '#2e7d61',
+                stops: [
+                    [53.9302, 9.4988],
+                    [53.9289, 9.5058],
+                    [53.9268, 9.5119],
+                    [53.9239, 9.5177],
+                    [53.9224, 9.5247],
+                    [53.9188, 9.5339],
+                    [53.9157, 9.5410]
+                ],
+                stopNames: ['Edendorf', 'Dithmarscher Platz', 'ZOB', 'Bahnhof', 'Süderhöhe', 'Wellenkamp', 'Sude'],
+                destination: 'Wellenkamp',
+                offset: 0.12,
+                speed: 0.0001
+            },
+            {
+                name: 'Linie 2',
+                color: '#2d5b9a',
+                stops: [
+                    [53.9175, 9.4990],
+                    [53.9204, 9.5061],
+                    [53.9234, 9.5102],
+                    [53.9281, 9.5178],
+                    [53.9326, 9.5235],
+                    [53.9365, 9.5314]
+                ],
+                stopNames: ['Tegelhörn', 'Schulzentrum', 'ZOB', 'Bahnhof', 'Hohenlockstedt', 'Lohbarbek'],
+                destination: 'Hohenlockstedt',
+                offset: 0.42,
+                speed: 0.00013
+            },
+            {
+                name: 'Linie 3',
+                color: '#c36b2d',
+                stops: [
+                    [53.9369, 9.5097],
+                    [53.9328, 9.5107],
+                    [53.9294, 9.5147],
+                    [53.9263, 9.5220],
+                    [53.9232, 9.5280],
+                    [53.9192, 9.5368],
+                    [53.9145, 9.5455]
+                ],
+                stopNames: ['Sude-West', 'Dorfstraße', 'ZOB', 'Bahnhof', 'Wellenkamp', 'Kremperheide', 'Krempe'],
+                destination: 'Krempe',
+                offset: 0.8,
+                speed: 0.00011
+            }
+        ];
+
+        function haversineDistance(a, b) {
+            const toRad = value => (value * Math.PI) / 180;
+            const earthRadiusKm = 6371;
+            const dLat = toRad(b[0] - a[0]);
+            const dLng = toRad(b[1] - a[1]);
+            const lat1 = toRad(a[0]);
+            const lat2 = toRad(b[0]);
+            const sinLat = Math.sin(dLat / 2) ** 2;
+            const sinLng = Math.sin(dLng / 2) ** 2;
+            return 2 * earthRadiusKm * Math.asin(Math.sqrt(sinLat + Math.cos(lat1) * Math.cos(lat2) * sinLng));
+        }
+
+        function buildRouteData(route) {
+            const distances = [0];
+            let total = 0;
+            for (let i = 1; i < route.stops.length; i += 1) {
+                const segmentLength = haversineDistance(route.stops[i - 1], route.stops[i]);
+                total += segmentLength;
+                distances.push(total);
+            }
+            return { ...route, totalDistance: total, distances };
+        }
+
+        function getPointOnRoute(routeData, distanceValue) {
+            const normalizedDistance = ((distanceValue % 1) + 1) % 1;
+            const target = routeData.totalDistance * normalizedDistance;
+            for (let i = 1; i < routeData.stops.length; i += 1) {
+                const prevDistance = routeData.distances[i - 1];
+                const nextDistance = routeData.distances[i];
+                if (target >= prevDistance && target <= nextDistance) {
+                    const segmentLength = Math.max(nextDistance - prevDistance, 0.00001);
+                    const t = (target - prevDistance) / segmentLength;
+                    const x1 = routeData.stops[i - 1][0];
+                    const y1 = routeData.stops[i - 1][1];
+                    const x2 = routeData.stops[i][0];
+                    const y2 = routeData.stops[i][1];
+                    return [x1 + (x2 - x1) * t, y1 + (y2 - y1) * t];
+                }
+            }
+            return routeData.stops[0];
+        }
+
+        const routeLayers = routeDefs.map((route) => {
+            const routeData = buildRouteData(route);
+            const line = L.polyline(routeData.stops, { color: route.color, weight: 4, opacity: 0.82, dashArray: '14, 14' }).addTo(busMap);
+            line.bindPopup(`<strong>${route.name}</strong><br>Itzehoe Demo-Linie`);
+            return { ...routeData, line };
+        });
+
+        const busIcon = (color, label) => L.divIcon({
+            className: 'bus-marker-shell',
+            html: `<span class="bus-marker" style="background:${color};" aria-hidden="true">🚌</span><span class="bus-marker-label">${label}</span>`,
+            iconSize: [54, 54],
+            iconAnchor: [27, 27],
+            popupAnchor: [0, -20]
+        });
+
+        const busListItems = document.getElementById('bus-list-items');
+        const activeBuses = routeLayers.map((route, index) => {
+            const marker = L.marker(getPointOnRoute(route, route.offset), {
+                icon: busIcon(route.color, String(index + 1)),
+                title: `${route.name} in Itzehoe`
+            }).addTo(busMap);
+
+            const listItem = document.createElement('button');
+            listItem.className = 'bus-list-item';
+            listItem.type = 'button';
+            listItem.style.setProperty('--route-color', route.color);
+            listItem.innerHTML = `<span class="bus-list-line">${route.name}</span><span class="bus-list-destination">Richtung ${route.destination}</span><span class="bus-list-state"><span class="status-dot"></span> Fährt · Demo</span>`;
+            busListItems.appendChild(listItem);
+
+            const bus = {
+                ...route,
+                marker,
+                position: route.offset,
+                listItem
+            };
+            const getNextStopName = () => {
+                const nextStopIndex = route.distances.findIndex(distance => distance / route.totalDistance > bus.position);
+                return route.stopNames[nextStopIndex === -1 ? 0 : nextStopIndex];
+            };
+            const popupContent = () => `
+                <div class="bus-info-card">
+                    <span class="bus-info-kicker">DEMO-FAHRT · ITZEHOE</span>
+                    <strong>${route.name} · Richtung ${route.destination}</strong>
+                    <span class="bus-info-detail">Nächster Halt: <b>${getNextStopName()}</b></span>
+                    <span class="bus-info-foot">Position und Fahrplan sind beispielhaft.</span>
+                </div>`;
+            marker.bindPopup(popupContent, { className: 'bus-info-popup', minWidth: 210, maxWidth: 260 });
+            marker.on('click', () => {
+                marker.setPopupContent(popupContent());
+                document.querySelectorAll('.bus-list-item').forEach(item => item.classList.remove('is-selected'));
+                listItem.classList.add('is-selected');
+            });
+            listItem.addEventListener('click', () => {
+                marker.setPopupContent(popupContent());
+                marker.openPopup();
+                busMap.panTo(marker.getLatLng(), { animate: true, duration: 0.45 });
+                document.querySelectorAll('.bus-list-item').forEach(item => item.classList.remove('is-selected'));
+                listItem.classList.add('is-selected');
+            });
+            return bus;
+        });
+
+        let previousAnimationTime;
+        function animateBuses(timestamp) {
+            const frameScale = previousAnimationTime === undefined
+                ? 1
+                : Math.min((timestamp - previousAnimationTime) / (1000 / 60), 3);
+            previousAnimationTime = timestamp;
+            activeBuses.forEach((bus) => {
+                bus.position = (bus.position + bus.speed * 0.3 * frameScale) % 1;
+                const nextPoint = getPointOnRoute(bus, bus.position);
+                bus.marker.setLatLng(nextPoint);
+            });
+            requestAnimationFrame(animateBuses);
+        }
+
+        animateBuses();
+
+        const mapWindow = document.querySelector('.map-window');
+        const mapExpandButton = document.getElementById('map-expand');
+        const mapCloseButton = document.getElementById('map-close');
+        let mapWasExpanded = false;
+
+        function setMapExpanded(expanded) {
+            mapWasExpanded = expanded;
+            mapWindow.classList.toggle('is-expanded', expanded);
+            document.body.classList.toggle('map-open', expanded);
+            if (expanded) {
+                mapWindow.setAttribute('role', 'dialog');
+                mapWindow.setAttribute('aria-modal', 'true');
+                mapWindow.setAttribute('aria-label', 'Vergrößerte Buskarte mit Linienübersicht');
+            } else {
+                mapWindow.removeAttribute('role');
+                mapWindow.removeAttribute('aria-modal');
+                mapWindow.removeAttribute('aria-label');
+            }
+            mapCloseButton.tabIndex = expanded ? 0 : -1;
+            mapExpandButton.tabIndex = expanded ? -1 : 0;
+            if (expanded) {
+                mapCloseButton.focus();
+                window.setTimeout(() => busMap.invalidateSize(), 250);
+            } else {
+                mapExpandButton.focus();
+                window.setTimeout(() => busMap.invalidateSize(), 250);
+            }
+        }
+
+        mapExpandButton.addEventListener('click', () => setMapExpanded(true));
+        mapCloseButton.addEventListener('click', () => setMapExpanded(false));
+        document.addEventListener('keydown', (event) => {
+            if (!mapWasExpanded) return;
+            if (event.key === 'Escape') {
+                setMapExpanded(false);
+                return;
+            }
+            if (event.key === 'Tab') {
+                const focusableElements = [...mapWindow.querySelectorAll('button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])')]
+                    .filter(element => element.getClientRects().length > 0);
+                const firstElement = focusableElements[0];
+                const lastElement = focusableElements[focusableElements.length - 1];
+                if (event.shiftKey && document.activeElement === firstElement) {
+                    event.preventDefault();
+                    lastElement.focus();
+                } else if (!event.shiftKey && document.activeElement === lastElement) {
+                    event.preventDefault();
+                    firstElement.focus();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
